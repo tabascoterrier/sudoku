@@ -51,7 +51,10 @@
   </button>
 
   <button type="button" class="tool" onclick={handlePauseToggle} disabled={isGameOver}>
-    <span class="icon" aria-hidden="true">{isPaused ? '▶' : '⏸'}</span>
+    <!-- U+FE0E forces plain text-style glyphs: ⏸ in particular defaults to
+         a colorful emoji presentation on iOS (a filled rounded-square icon)
+         that clashes with the other toolbar icons' plain outline style. -->
+    <span class="icon" aria-hidden="true">{isPaused ? '▶︎' : '⏸︎'}</span>
     <span class="label">{isPaused ? 'Resume' : 'Pause'}</span>
   </button>
 </div>
