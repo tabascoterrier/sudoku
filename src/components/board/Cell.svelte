@@ -136,6 +136,7 @@
     aspect-ratio: 1;
     width: 100%;
     min-width: 0;
+    min-height: 0;
     border: 1px solid var(--board-line, #ccc);
     background: var(--cell-bg, #fff);
     color: var(--cell-fg, #1a1a1a);

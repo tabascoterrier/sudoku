@@ -93,7 +93,13 @@
 <style>
   .board {
     display: grid;
-    grid-template-rows: repeat(9, 1fr);
+    /* minmax(0, 1fr), not bare 1fr: bare 1fr tracks default to
+       minmax(auto, 1fr), so a cell's content (e.g. the 3x3 notes grid) can
+       inflate its whole row/column past its equal share. Safari's
+       min-content estimate for that nested grid text runs slightly larger
+       than Chrome's, so only Safari visibly bulges — clamping the track
+       minimum to 0 makes every row/column exactly equal regardless. */
+    grid-template-rows: repeat(9, minmax(0, 1fr));
     width: min(100%, 540px);
     aspect-ratio: 1;
     margin-inline: auto;
@@ -103,7 +109,7 @@
 
   .board-row {
     display: grid;
-    grid-template-columns: repeat(9, 1fr);
+    grid-template-columns: repeat(9, minmax(0, 1fr));
   }
 
   .sr-only {
