@@ -1,5 +1,6 @@
 <script lang="ts">
   import { gameStore } from '../../lib/stores/game.svelte';
+  import { boxOf } from '../../lib/sudoku/peers';
 
   interface Props {
     index: number;
@@ -29,7 +30,14 @@
   const isSelected = $derived(engine?.selectedCell === index);
   const isError = $derived(engine?.isCellError(index) ?? false);
 
+  const hint = $derived(engine?.activeHint ?? null);
+  const currentHintStep = $derived(hint?.steps[engine?.hintStepIndex ?? 0]);
+
+  // Peer/same-value context highlighting is about the current selection;
+  // while a hint is guiding attention elsewhere, it would just compete with
+  // the hint's own highlighting, so suppress it.
   const isPeer = $derived.by(() => {
+    if (currentHintStep) return false;
     if (!engine || engine.selectedCell === null || engine.selectedCell === index) return false;
     const sel = engine.selectedCell;
     const selRow = Math.floor(sel / 9);
@@ -40,17 +48,27 @@
   });
 
   const isSameValue = $derived.by(() => {
+    if (currentHintStep) return false;
     if (!engine || engine.selectedCell === null || value === 0) return false;
     if (engine.selectedCell === index) return false;
     const selectedValue = engine.grid[engine.selectedCell].value;
     return selectedValue !== 0 && selectedValue === value;
   });
 
-  const hint = $derived(engine?.activeHint ?? null);
-  const currentHintStep = $derived(hint?.steps[engine?.hintStepIndex ?? 0]);
+  const isHighlightedByHint = $derived(currentHintStep?.highlightCells.includes(index) ?? false);
+  const isHintTarget = $derived(isHighlightedByHint && hint?.targetCell === index);
+  const isHintSupport = $derived(isHighlightedByHint && !isHintTarget);
+
+  const isInHintScope = $derived.by(() => {
+    const scope = currentHintStep?.highlightScope;
+    if (!scope) return false;
+    if (scope.type === 'row') return row === scope.index;
+    if (scope.type === 'col') return col === scope.index;
+    return boxOf(index) === scope.index;
+  });
 
   const isDimmedByHint = $derived(
-    Boolean(currentHintStep?.dimmed) && !currentHintStep!.highlightCells.includes(index),
+    Boolean(currentHintStep?.dimmed) && !isHighlightedByHint && !isInHintScope,
   );
 
   const ghostValue = $derived(
@@ -90,6 +108,9 @@
     class:same-value={isSameValue}
     class:error={isError}
     class:dimmed={isDimmedByHint}
+    class:hint-scope={isInHintScope && !isHighlightedByHint}
+    class:hint-highlight={isHintSupport}
+    class:hint-target={isHintTarget}
     onclick={onSelect}
   >
     {#if value !== 0}
@@ -155,8 +176,25 @@
     color: var(--cell-error-fg, #d33);
   }
 
-  .cell.dimmed {
-    opacity: 0.35;
+  /* Fade only the digit/notes, not the cell chrome, so the grid lines stay
+     crisp instead of turning blotchy where dimmed and highlighted cells meet. */
+  .cell.dimmed .value,
+  .cell.dimmed .notes {
+    opacity: 0.3;
+  }
+
+  .cell.hint-scope {
+    background: var(--cell-hint-scope-bg, #fbf1d8);
+  }
+
+  .cell.hint-highlight {
+    background: var(--cell-hint-bg, #f7dfa0);
+  }
+
+  .cell.hint-target {
+    background: var(--cell-hint-target-bg, #f5c451);
+    outline: 2px solid var(--cell-hint-target-outline, #c98a0e);
+    outline-offset: -2px;
   }
 
   .value {

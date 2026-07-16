@@ -13,6 +13,10 @@
   --cell-error-fg: #d33;
   --cell-ghost-fg: #1b6ef3;
   --cell-note-fg: #666;
+  --cell-hint-scope-bg: #fbf1d8;
+  --cell-hint-bg: #f7dfa0;
+  --cell-hint-target-bg: #f5c451;
+  --cell-hint-target-outline: #c98a0e;
 
   --control-bg: #fff;
   --control-bg-hover: #eef4ff;
@@ -43,6 +47,10 @@
     --cell-error-fg: #ff6b6b;
     --cell-ghost-fg: #5b9dff;
     --cell-note-fg: #aaa;
+    --cell-hint-scope-bg: #3a331d;
+    --cell-hint-bg: #5c4a1a;
+    --cell-hint-target-bg: #8a6a1f;
+    --cell-hint-target-outline: #f0b93d;
 
     --control-bg: #262626;
     --control-bg-hover: #2f3b52;
@@ -73,6 +81,10 @@
   --cell-error-fg: #ff6b6b;
   --cell-ghost-fg: #5b9dff;
   --cell-note-fg: #aaa;
+  --cell-hint-scope-bg: #3a331d;
+  --cell-hint-bg: #5c4a1a;
+  --cell-hint-target-bg: #8a6a1f;
+  --cell-hint-target-outline: #f0b93d;
 
   --control-bg: #262626;
   --control-bg-hover: #2f3b52;
@@ -102,6 +114,10 @@
   --cell-error-fg: #d33;
   --cell-ghost-fg: #1b6ef3;
   --cell-note-fg: #666;
+  --cell-hint-scope-bg: #fbf1d8;
+  --cell-hint-bg: #f7dfa0;
+  --cell-hint-target-bg: #f5c451;
+  --cell-hint-target-outline: #c98a0e;
 
   --control-bg: #fff;
   --control-bg-hover: #eef4ff;
