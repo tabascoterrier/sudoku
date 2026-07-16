@@ -49,9 +49,14 @@
 <style>
   .close {
     position: absolute;
-    top: 0.3rem;
-    right: 0.5rem;
-    padding: 0.5rem;
+    top: 0.15rem;
+    right: 0.15rem;
+    width: 2.75rem;
+    height: 2.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
     border: none;
     background: transparent;
     font-size: 1.3rem;
@@ -61,7 +66,7 @@
   }
 
   h2 {
-    margin: 0 1.5rem 0.5rem 0;
+    margin: 0 2.75rem 0.5rem 0;
     font-size: 1.2rem;
   }
 

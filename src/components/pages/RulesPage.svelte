@@ -81,7 +81,7 @@
     <p>
       Difficulty is controlled by how many cells are filled in to start: Easy puzzles leave more
       digits in place, while Expert puzzles start with the fewest and require deeper chains of
-      deduction. Switch difficulty at any time from the tabs above the board — this starts a fresh
+      deduction. Switch difficulty at any time from the New Game menu — this starts a fresh
       puzzle, so any progress on the current one will be lost.
     </p>
   </section>

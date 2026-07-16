@@ -31,6 +31,7 @@
   });
 </script>
 
+<!-- svelte-ignore a11y_click_events_have_key_events -- Escape is handled at the window level above, since it must dismiss regardless of focus location -->
 <div class="backdrop" role="presentation" onclick={handleBackdropClick}>
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby={labelledBy} tabindex="-1" onclick={stop}>
     {@render children()}
