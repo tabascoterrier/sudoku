@@ -1,12 +1,6 @@
 <script lang="ts">
   import { gameStore } from '../../lib/stores/game.svelte';
 
-  interface Props {
-    onOpenNewGameMenu: () => void;
-  }
-
-  let { onOpenNewGameMenu }: Props = $props();
-
   const engine = $derived(gameStore.engine);
   const notesMode = $derived(engine?.notesMode ?? false);
   const canUndo = $derived((engine?.history.length ?? 0) > 0);
@@ -59,11 +53,6 @@
   <button type="button" class="tool" onclick={handlePauseToggle} disabled={isGameOver}>
     <span class="icon" aria-hidden="true">{isPaused ? '▶' : '⏸'}</span>
     <span class="label">{isPaused ? 'Resume' : 'Pause'}</span>
-  </button>
-
-  <button type="button" class="tool" onclick={onOpenNewGameMenu}>
-    <span class="icon" aria-hidden="true">+</span>
-    <span class="label">New Game</span>
   </button>
 </div>
 

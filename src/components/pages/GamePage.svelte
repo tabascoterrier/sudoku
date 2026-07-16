@@ -1,6 +1,5 @@
 <script lang="ts">
   import Board from '../board/Board.svelte';
-  import DifficultySelector from '../controls/DifficultySelector.svelte';
   import HintCard from '../controls/HintCard.svelte';
   import MistakesTimerBar from '../controls/MistakesTimerBar.svelte';
   import NumberPad from '../controls/NumberPad.svelte';
@@ -8,8 +7,6 @@
   import Toolbar from '../controls/Toolbar.svelte';
   import WinModal from '../shared/WinModal.svelte';
   import { gameStore } from '../../lib/stores/game.svelte';
-  import { router } from '../../router/router.svelte';
-  import { pathForDifficulty } from '../../router/routes';
   import type { Difficulty } from '../../lib/sudoku/types';
 
   interface Props {
@@ -21,26 +18,17 @@
 
   let loadedDifficulty: Difficulty | null = null;
 
-  // Deep-linking to /easy/, /hard/, etc. (or the difficulty selector
-  // navigating to a new route) should load that tier's puzzle.
+  // Deep-linking to /easy/, /hard/, etc. (or the New Game menu navigating to
+  // a new route) should load that tier's puzzle.
   $effect(() => {
     if (loadedDifficulty !== difficulty) {
       loadedDifficulty = difficulty;
       gameStore.loadPuzzle(difficulty);
     }
   });
-
-  function selectDifficulty(next: Difficulty): void {
-    if (next === difficulty) return;
-    const hasProgress = (gameStore.engine?.history.length ?? 0) > 0;
-    if (hasProgress && !confirm('Current game progress will be lost. Continue?')) return;
-    router.navigate(pathForDifficulty(next));
-  }
 </script>
 
 <div class="game-page">
-  <DifficultySelector current={difficulty} onSelect={selectDifficulty} />
-
   {#if gameStore.isGenerating || !gameStore.engine}
     <p class="loading">Generating puzzle…</p>
   {:else}
@@ -52,7 +40,7 @@
       {/if}
     </div>
     <NumberPad />
-    <Toolbar {onOpenNewGameMenu} />
+    <Toolbar />
     <HintCard />
     {#if gameStore.engine.isComplete}
       <WinModal onNewGame={onOpenNewGameMenu} />
