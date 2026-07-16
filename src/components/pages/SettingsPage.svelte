@@ -61,7 +61,7 @@
   }
 
   .theme-btn {
-    padding: 0.45rem 1rem;
+    padding: 0.7rem 1.1rem;
     border-radius: 999px;
     border: none;
     background: transparent;

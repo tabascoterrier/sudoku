@@ -71,8 +71,9 @@
 
   .dismiss {
     position: absolute;
-    top: 0.4rem;
-    right: 0.6rem;
+    top: 0.1rem;
+    right: 0.2rem;
+    padding: 0.5rem;
     border: none;
     background: transparent;
     font-size: 1.1rem;
@@ -120,8 +121,8 @@
   }
 
   .nav-btn {
-    width: 2.1rem;
-    height: 2.1rem;
+    width: 2.75rem;
+    height: 2.75rem;
     border-radius: 50%;
     border: 1px solid var(--control-border, #ccc);
     background: var(--control-bg, #fff);

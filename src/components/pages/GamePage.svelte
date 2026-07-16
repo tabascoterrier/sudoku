@@ -58,6 +58,13 @@
     padding: 0 0.75rem 1.5rem;
   }
 
+  @media (max-width: 640px) {
+    .game-page {
+      gap: 0.6rem;
+      padding: 0 0.5rem 1rem;
+    }
+  }
+
   .board-wrapper {
     position: relative;
   }

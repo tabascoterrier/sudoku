@@ -86,7 +86,7 @@
   }
 
   .new-game-btn {
-    padding: 0.45rem 1rem;
+    padding: 0.7rem 1.1rem;
     border-radius: 999px;
     border: none;
     background: var(--accent, #1b6ef3);
@@ -104,7 +104,7 @@
     border-radius: 0.4rem;
     font-size: 1.1rem;
     line-height: 1;
-    padding: 0.4rem 0.6rem;
+    padding: 0.65rem 0.75rem;
     cursor: pointer;
   }
 

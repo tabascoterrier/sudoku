@@ -49,8 +49,9 @@
 <style>
   .close {
     position: absolute;
-    top: 0.7rem;
-    right: 0.9rem;
+    top: 0.3rem;
+    right: 0.5rem;
+    padding: 0.5rem;
     border: none;
     background: transparent;
     font-size: 1.3rem;
