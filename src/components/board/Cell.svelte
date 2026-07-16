@@ -155,7 +155,6 @@
   }
 
   .cell.given {
-    font-weight: 700;
     cursor: default;
   }
 
@@ -199,6 +198,7 @@
   }
 
   .value {
+    font-weight: 700;
     line-height: 1;
   }
 
