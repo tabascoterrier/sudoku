@@ -144,3 +144,12 @@ body {
   background: var(--page-bg);
   color: var(--page-fg);
 }
+
+/* iOS Safari treats rapid taps on the same/nearby element as a double-tap
+   and zooms the page. touch-action: manipulation disables that gesture on
+   buttons (number pad, board cells, toolbar, etc.) while still leaving
+   pinch-to-zoom available everywhere else, unlike a viewport
+   user-scalable=no, which would kill zoom accessibility entirely. */
+button {
+  touch-action: manipulation;
+}
