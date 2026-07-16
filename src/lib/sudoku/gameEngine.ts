@@ -1,5 +1,5 @@
-import { PEERS } from './peers';
-import { HINT_COMMIT_SCORE } from './scoring';
+import { BOX_CELLS, boxOf, COL_CELLS, colOf, PEERS, ROW_CELLS, rowOf } from './peers';
+import { CORRECT_ENTRY_SCORE, HINT_PENALTY, MISTAKE_PENALTY, UNIT_COMPLETE_BONUS } from './scoring';
 import { buildHint, type Hint } from './techniques';
 import type { Board, Cell, Puzzle } from './types';
 
@@ -84,6 +84,28 @@ export class GameEngine {
     cell.notes = snap.notes;
   }
 
+  // Applies a score change, clamping at zero, and returns the amount that
+  // actually applied (used for history bookkeeping).
+  private addScore(delta: number): number {
+    const before = this.score;
+    this.score = Math.max(0, this.score + delta);
+    return this.score - before;
+  }
+
+  // A bonus for each row/column/box containing `index` that is now fully
+  // correct. Only called right after a correct value lands in `index`, so a
+  // freshly-completed unit is necessarily this move's doing.
+  private unitCompletionBonus(index: number): number {
+    const units = [ROW_CELLS[rowOf(index)], COL_CELLS[colOf(index)], BOX_CELLS[boxOf(index)]];
+    let bonus = 0;
+    for (const unit of units) {
+      if (unit.every((i) => this.grid[i].value === this.solution[i])) {
+        bonus += UNIT_COMPLETE_BONUS;
+      }
+    }
+    return bonus;
+  }
+
   // Player-facing entry point for a digit keypress/tap: routes to a note
   // toggle or a final-value commit depending on notes mode (SPEC §6).
   enterDigit(index: number, digit: number): void {
@@ -135,15 +157,20 @@ export class GameEngine {
     const peerClears = this.clearPeerNotes(index, value);
     const after = [this.snapshot(index), ...peerClears.after];
 
-    const mistakeDelta = value !== this.solution[index] ? 1 : 0;
+    const correct = value === this.solution[index];
+    const mistakeDelta = correct ? 0 : 1;
     this.mistakes += mistakeDelta;
+
+    const scoreDelta = correct
+      ? this.addScore(CORRECT_ENTRY_SCORE + this.unitCompletionBonus(index))
+      : this.addScore(-MISTAKE_PENALTY);
 
     this.history.push({
       type: 'set-value',
       before: [...before, ...peerClears.before],
       after,
       mistakeDelta,
-      scoreDelta: 0,
+      scoreDelta,
       hintDelta: 0,
     });
 
@@ -202,8 +229,9 @@ export class GameEngine {
 
   // Commits the currently-displayed hint's target digit as a correct final
   // entry (no mistake risk — it's provably right), consumes a hint charge,
-  // and awards points, with the same peer-note-clear behavior as a manual
-  // correct entry (SPEC §7).
+  // and costs points (a hint should never out-earn solving the cell
+  // yourself), with the same peer-note-clear behavior as a manual correct
+  // entry. A unit completed by the hinted digit still earns its bonus.
   commitHint(): void {
     if (!this.activeHint || this.isComplete) return;
     const { targetCell, value } = this.activeHint;
@@ -216,14 +244,14 @@ export class GameEngine {
     const after = [this.snapshot(targetCell), ...peerClears.after];
 
     this.hintsRemaining -= 1;
-    this.score += HINT_COMMIT_SCORE;
+    const scoreDelta = this.addScore(-HINT_PENALTY + this.unitCompletionBonus(targetCell));
 
     this.history.push({
       type: 'hint-commit',
       before: [...before, ...peerClears.before],
       after,
       mistakeDelta: 0,
-      scoreDelta: HINT_COMMIT_SCORE,
+      scoreDelta,
       hintDelta: -1,
     });
 

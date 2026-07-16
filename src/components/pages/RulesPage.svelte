@@ -62,8 +62,17 @@
       Stuck? Use a <strong>Hint</strong>. Each puzzle gives you a limited number of hints, and each
       one walks you through a real deduction step by step — naming the technique, highlighting the
       relevant cells, and explaining why a particular digit must go in a particular cell — rather
-      than just filling in a random answer. Applying a hint commits the digit as a final answer and
-      earns you points.
+      than just filling in a random answer. Applying a hint commits the digit as a final answer,
+      but costs you points — solving cells yourself is always worth more.
+    </p>
+  </section>
+
+  <section>
+    <h2>Scoring</h2>
+    <p>
+      Each correct entry earns you points, and completing a row, column, or 3×3 box earns a bonus
+      on top. Wrong entries and hints both cost points instead — a hint is handy in a pinch, but
+      never pays off as well as working out the digit yourself. Score can't drop below zero.
     </p>
   </section>
 

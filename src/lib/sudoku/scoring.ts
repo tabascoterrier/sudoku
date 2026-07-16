@@ -1,5 +1,8 @@
-// SPEC §13 flags the real scoring formula as an unresolved open question (no
-// backend to reverse-engineer it from). This is an invented value matching
-// the one observed data point: the "points" counter jumped from 0 to 50 on
-// first hint use (SPEC §7).
-export const HINT_COMMIT_SCORE = 50;
+// Invented scoring system: correct entries earn points, mistakes and hints
+// cost points (hints in particular should never be a net win over just
+// solving the cell yourself), and completing a row, column, or box earns a
+// bonus. Score never drops below zero.
+export const CORRECT_ENTRY_SCORE = 10;
+export const MISTAKE_PENALTY = 5;
+export const HINT_PENALTY = 25;
+export const UNIT_COMPLETE_BONUS = 20;

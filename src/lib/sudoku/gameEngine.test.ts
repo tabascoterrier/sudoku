@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { GameEngine, STARTING_HINTS } from './gameEngine';
-import { HINT_COMMIT_SCORE } from './scoring';
+import { CORRECT_ENTRY_SCORE, HINT_PENALTY, MISTAKE_PENALTY, UNIT_COMPLETE_BONUS } from './scoring';
 import type { Board, Puzzle } from './types';
 
 const SOLUTION = Uint8Array.from([
@@ -12,9 +12,8 @@ const SOLUTION = Uint8Array.from([
 // Givens: everything except cells 4, 13, 40 (three empty cells to play with),
 // none of which are peers of each other (different rows/cols/boxes) so
 // filling one never triggers peer-note interactions with another by accident.
-function makeTestPuzzle(): Puzzle {
+function makePuzzleWithEmpties(empties: number[]): Puzzle {
   const givens = SOLUTION.slice() as Board;
-  const empties = [4, 13, 40];
   for (const i of empties) givens[i] = 0;
   return {
     id: 'test-puzzle',
@@ -23,6 +22,10 @@ function makeTestPuzzle(): Puzzle {
     solution: SOLUTION,
     actualGivens: 81 - empties.length,
   };
+}
+
+function makeTestPuzzle(): Puzzle {
+  return makePuzzleWithEmpties([4, 13, 40]);
 }
 
 let engine: GameEngine;
@@ -169,24 +172,30 @@ describe('undo', () => {
 });
 
 describe('hints', () => {
-  it('commits the hinted digit like a correct manual entry, awards score, and consumes a charge', () => {
-    const hint = engine.requestHint();
+  it('commits the hinted digit like a correct manual entry, deducts points, and consumes a charge', () => {
+    // Cells 0/1/9/10 form a 2x2 block that's mutually protective: filling any
+    // one of them, alone, never completes its row, column, or box, so the
+    // hint's score delta here is exactly -HINT_PENALTY regardless of which
+    // of the four cells the hint engine happens to target.
+    const isolated = new GameEngine(makePuzzleWithEmpties([0, 1, 9, 10]));
+    const hint = isolated.requestHint();
     expect(hint).not.toBeNull();
-    engine.commitHint();
-    expect(engine.grid[hint!.targetCell].value).toBe(hint!.value);
-    expect(engine.grid[hint!.targetCell].value).toBe(SOLUTION[hint!.targetCell]);
-    expect(engine.score).toBe(HINT_COMMIT_SCORE);
-    expect(engine.hintsRemaining).toBe(STARTING_HINTS - 1);
-    expect(engine.mistakes).toBe(0);
+    isolated.commitHint();
+    expect(isolated.grid[hint!.targetCell].value).toBe(hint!.value);
+    expect(isolated.grid[hint!.targetCell].value).toBe(SOLUTION[hint!.targetCell]);
+    expect(isolated.score).toBe(0); // -HINT_PENALTY clamped at zero from a fresh game
+    expect(isolated.hintsRemaining).toBe(STARTING_HINTS - 1);
+    expect(isolated.mistakes).toBe(0);
   });
 
-  it('does not refund score or hint charge on undo after a hint commit', () => {
+  it('does not refund the hint penalty or hint charge on undo after a hint commit', () => {
     engine.requestHint();
     engine.commitHint();
+    const scoreAfterHint = engine.score;
     const targetCell = engine.history[engine.history.length - 1].after[0].index;
     engine.undo();
     expect(engine.grid[targetCell].value).toBe(0);
-    expect(engine.score).toBe(HINT_COMMIT_SCORE);
+    expect(engine.score).toBe(scoreAfterHint);
     expect(engine.hintsRemaining).toBe(STARTING_HINTS - 1);
   });
 
@@ -210,6 +219,87 @@ describe('hints', () => {
     expect(engine.hintStepIndex).toBe(2);
     engine.prevHintStep();
     expect(engine.hintStepIndex).toBe(1);
+  });
+});
+
+describe('scoring', () => {
+  // Cells 0/1/9/10 form a 2x2 block: each one's row, column, and box still
+  // has another empty member of the block left, so filling any single one
+  // never triggers a unit-completion bonus. This isolates the base
+  // correct-entry score and the mistake penalty from bonus interference.
+  const PROTECTED_BLOCK = [0, 1, 9, 10];
+
+  it('awards points for a correct entry with no unit bonus in play', () => {
+    const e = new GameEngine(makePuzzleWithEmpties(PROTECTED_BLOCK));
+    e.setValue(0, SOLUTION[0]);
+    expect(e.score).toBe(CORRECT_ENTRY_SCORE);
+  });
+
+  it('penalizes a wrong entry, clamped at zero from a fresh game', () => {
+    const e = new GameEngine(makePuzzleWithEmpties(PROTECTED_BLOCK));
+    const wrong = (SOLUTION[0] % 9) + 1;
+    e.setValue(0, wrong);
+    expect(e.score).toBe(0);
+    expect(e.mistakes).toBe(1);
+  });
+
+  it('subtracts the mistake penalty from existing points rather than clamping every time', () => {
+    const e = new GameEngine(makePuzzleWithEmpties(PROTECTED_BLOCK));
+    e.setValue(0, SOLUTION[0]); // +CORRECT_ENTRY_SCORE, no bonus
+    const wrong = (SOLUTION[1] % 9) + 1;
+    e.setValue(1, wrong); // -MISTAKE_PENALTY
+    expect(e.score).toBe(CORRECT_ENTRY_SCORE - MISTAKE_PENALTY);
+  });
+
+  it('awards a bonus for completing a row (with column and box still open)', () => {
+    // Cell 0 is row 0's only empty cell; 9 keeps column 0 open and 10 keeps
+    // box 0 open, and neither sits in row 0, so filling 0 completes exactly
+    // one unit.
+    const e = new GameEngine(makePuzzleWithEmpties([0, 9, 10]));
+    e.setValue(0, SOLUTION[0]);
+    expect(e.score).toBe(CORRECT_ENTRY_SCORE + UNIT_COMPLETE_BONUS);
+  });
+
+  it('awards a bonus for completing a column (with row and box still open)', () => {
+    // Cell 5 keeps row 0 open and 10 keeps box 0 open; neither sits in
+    // column 0, so filling 0 completes only column 0.
+    const e = new GameEngine(makePuzzleWithEmpties([0, 5, 10]));
+    e.setValue(0, SOLUTION[0]);
+    expect(e.score).toBe(CORRECT_ENTRY_SCORE + UNIT_COMPLETE_BONUS);
+  });
+
+  it('awards a bonus for completing a box (with row and column still open)', () => {
+    // Cell 5 keeps row 0 open and 27 keeps column 0 open; neither sits in
+    // box 0, so filling 0 completes only box 0.
+    const e = new GameEngine(makePuzzleWithEmpties([0, 5, 27]));
+    e.setValue(0, SOLUTION[0]);
+    expect(e.score).toBe(CORRECT_ENTRY_SCORE + UNIT_COMPLETE_BONUS);
+  });
+
+  it('stacks a bonus per unit when one entry completes several at once', () => {
+    // The lone empty cell in the whole grid completes its row, column, and
+    // box in the same move.
+    const e = new GameEngine(makePuzzleWithEmpties([40]));
+    e.setValue(40, SOLUTION[40]);
+    expect(e.score).toBe(CORRECT_ENTRY_SCORE + 3 * UNIT_COMPLETE_BONUS);
+  });
+
+  it('deducts the hint penalty from existing points, on top of any unit bonus the hinted digit completes', () => {
+    const e = new GameEngine(makePuzzleWithEmpties([...PROTECTED_BLOCK, 40]));
+    e.setValue(40, SOLUTION[40]); // isolated cell: completes its row, column, and box at once
+    const scoreBefore = e.score;
+    expect(scoreBefore).toBe(CORRECT_ENTRY_SCORE + 3 * UNIT_COMPLETE_BONUS);
+
+    e.requestHint(); // targets one of the still-protected 0/1/9/10 cells — no bonus
+    e.commitHint();
+    expect(e.score).toBe(scoreBefore - HINT_PENALTY);
+  });
+
+  it('never lets score go negative', () => {
+    const e = new GameEngine(makePuzzleWithEmpties(PROTECTED_BLOCK));
+    e.setValue(0, (SOLUTION[0] % 9) + 1);
+    e.setValue(1, (SOLUTION[1] % 9) + 1);
+    expect(e.score).toBe(0);
   });
 });
 
