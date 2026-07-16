@@ -8,7 +8,6 @@ interface SavedGame {
   puzzle: { id: string; difficulty: Difficulty; givens: number[]; solution: number[]; actualGivens: number };
   grid: Cell[];
   mistakes: number;
-  hintsRemaining: number;
   score: number;
   elapsedMs: number;
   notesMode: boolean;
@@ -26,7 +25,6 @@ function serialize(engine: GameEngine): SavedGame {
     },
     grid: engine.grid.map((c) => ({ ...c })),
     mistakes: engine.mistakes,
-    hintsRemaining: engine.hintsRemaining,
     score: engine.score,
     elapsedMs: engine.elapsedMs,
     notesMode: engine.notesMode,
@@ -47,7 +45,6 @@ function hydrate(saved: SavedGame): GameEngine {
   const engine = new GameEngine(puzzle);
   engine.grid = saved.grid.map((c) => ({ ...c }));
   engine.mistakes = saved.mistakes;
-  engine.hintsRemaining = saved.hintsRemaining;
   engine.score = saved.score;
   engine.elapsedMs = saved.elapsedMs;
   engine.notesMode = saved.notesMode;

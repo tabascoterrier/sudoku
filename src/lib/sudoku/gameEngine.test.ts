@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { GameEngine, STARTING_HINTS } from './gameEngine';
+import { GameEngine } from './gameEngine';
 import { CORRECT_ENTRY_SCORE, HINT_PENALTY, MISTAKE_PENALTY, UNIT_COMPLETE_BONUS } from './scoring';
 import type { Board, Puzzle } from './types';
 
@@ -42,9 +42,8 @@ describe('initial state', () => {
     expect(engine.grid[4].value).toBe(0);
   });
 
-  it('starts with zero mistakes, full hints, zero score, not paused/complete', () => {
+  it('starts with zero mistakes, zero score, not paused/complete', () => {
     expect(engine.mistakes).toBe(0);
-    expect(engine.hintsRemaining).toBe(STARTING_HINTS);
     expect(engine.score).toBe(0);
     expect(engine.isPaused).toBe(false);
     expect(engine.isComplete).toBe(false);
@@ -172,7 +171,7 @@ describe('undo', () => {
 });
 
 describe('hints', () => {
-  it('commits the hinted digit like a correct manual entry, deducts points, and consumes a charge', () => {
+  it('commits the hinted digit like a correct manual entry and deducts points', () => {
     // Cells 0/1/9/10 form a 2x2 block that's mutually protective: filling any
     // one of them, alone, never completes its row, column, or box, so the
     // hint's score delta here is exactly -HINT_PENALTY regardless of which
@@ -184,11 +183,10 @@ describe('hints', () => {
     expect(isolated.grid[hint!.targetCell].value).toBe(hint!.value);
     expect(isolated.grid[hint!.targetCell].value).toBe(SOLUTION[hint!.targetCell]);
     expect(isolated.score).toBe(0); // -HINT_PENALTY clamped at zero from a fresh game
-    expect(isolated.hintsRemaining).toBe(STARTING_HINTS - 1);
     expect(isolated.mistakes).toBe(0);
   });
 
-  it('does not refund the hint penalty or hint charge on undo after a hint commit', () => {
+  it('does not refund the hint penalty on undo after a hint commit', () => {
     engine.requestHint();
     engine.commitHint();
     const scoreAfterHint = engine.score;
@@ -196,17 +194,18 @@ describe('hints', () => {
     engine.undo();
     expect(engine.grid[targetCell].value).toBe(0);
     expect(engine.score).toBe(scoreAfterHint);
-    expect(engine.hintsRemaining).toBe(STARTING_HINTS - 1);
   });
 
-  it('runs out after STARTING_HINTS uses', () => {
-    for (let i = 0; i < STARTING_HINTS; i++) {
-      const hint = engine.requestHint();
+  it('has no cap on how many hints can be requested — only puzzle completion stops it', () => {
+    // Four isolated cells, one more than the old 3-hint cap this replaces.
+    const isolated = new GameEngine(makePuzzleWithEmpties([0, 1, 9, 10]));
+    for (let i = 0; i < 4; i++) {
+      const hint = isolated.requestHint();
       expect(hint).not.toBeNull();
-      engine.commitHint();
+      isolated.commitHint();
     }
-    expect(engine.hintsRemaining).toBe(0);
-    expect(engine.requestHint()).toBeNull();
+    expect(isolated.isComplete).toBe(true);
+    expect(isolated.requestHint()).toBeNull(); // no hints once the puzzle is solved
   });
 
   it('advances and retreats through the 3-step walkthrough without exceeding its bounds', () => {
@@ -314,7 +313,7 @@ describe('win detection', () => {
 });
 
 describe('restart', () => {
-  it('resets the board to givens and clears mistakes/score/hints/history', () => {
+  it('resets the board to givens and clears mistakes/score/history', () => {
     engine.setValue(4, (SOLUTION[4] % 9) + 1); // a mistake
     engine.requestHint();
     engine.commitHint();
@@ -324,7 +323,6 @@ describe('restart', () => {
     expect(engine.grid[0].value).toBe(SOLUTION[0]); // given cells restored
     expect(engine.mistakes).toBe(0);
     expect(engine.score).toBe(0);
-    expect(engine.hintsRemaining).toBe(STARTING_HINTS);
     expect(engine.history).toHaveLength(0);
     expect(engine.isComplete).toBe(false);
   });

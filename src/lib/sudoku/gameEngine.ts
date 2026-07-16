@@ -3,8 +3,6 @@ import { CORRECT_ENTRY_SCORE, HINT_PENALTY, MISTAKE_PENALTY, UNIT_COMPLETE_BONUS
 import { buildHint, type Hint } from './techniques';
 import type { Board, Cell, Puzzle } from './types';
 
-export const STARTING_HINTS = 3;
-
 interface CellSnapshot {
   index: number;
   value: number;
@@ -19,7 +17,6 @@ interface HistoryEntry {
   after: CellSnapshot[];
   mistakeDelta: number;
   scoreDelta: number;
-  hintDelta: number;
 }
 
 // Plain, Svelte-agnostic game state + rules engine — unit-testable with no
@@ -31,7 +28,6 @@ export class GameEngine {
   selectedCell: number | null = null;
   notesMode = false;
   mistakes = 0;
-  hintsRemaining = STARTING_HINTS;
   score = 0;
   elapsedMs = 0;
   isPaused = false;
@@ -123,7 +119,7 @@ export class GameEngine {
     const before = [this.snapshot(index)];
     cell.notes ^= 1 << (digit - 1);
     const after = [this.snapshot(index)];
-    this.history.push({ type: 'toggle-note', before, after, mistakeDelta: 0, scoreDelta: 0, hintDelta: 0 });
+    this.history.push({ type: 'toggle-note', before, after, mistakeDelta: 0, scoreDelta: 0 });
   }
 
   // Clears digit `value`'s pencil mark from every peer of `index` (SPEC §6:
@@ -171,7 +167,6 @@ export class GameEngine {
       after,
       mistakeDelta,
       scoreDelta,
-      hintDelta: 0,
     });
 
     this.checkWin();
@@ -185,7 +180,7 @@ export class GameEngine {
     cell.value = 0;
     cell.notes = 0;
     const after = [this.snapshot(index)];
-    this.history.push({ type: 'erase', before, after, mistakeDelta: 0, scoreDelta: 0, hintDelta: 0 });
+    this.history.push({ type: 'erase', before, after, mistakeDelta: 0, scoreDelta: 0 });
   }
 
   // Undo reverts cell content only. It deliberately never refunds
@@ -205,7 +200,7 @@ export class GameEngine {
   }
 
   requestHint(): Hint | null {
-    if (this.hintsRemaining <= 0 || this.isComplete) return null;
+    if (this.isComplete) return null;
     const board = Uint8Array.from(this.grid, (c) => c.value) as Board;
     this.activeHint = buildHint(board, this.solution);
     this.hintStepIndex = 0;
@@ -228,10 +223,11 @@ export class GameEngine {
   }
 
   // Commits the currently-displayed hint's target digit as a correct final
-  // entry (no mistake risk — it's provably right), consumes a hint charge,
-  // and costs points (a hint should never out-earn solving the cell
-  // yourself), with the same peer-note-clear behavior as a manual correct
-  // entry. A unit completed by the hinted digit still earns its bonus.
+  // entry (no mistake risk — it's provably right) and costs points (a hint
+  // should never out-earn solving the cell yourself), with the same
+  // peer-note-clear behavior as a manual correct entry. A unit completed by
+  // the hinted digit still earns its bonus. Hints are unlimited — nothing
+  // caps how many times a player can call this.
   commitHint(): void {
     if (!this.activeHint || this.isComplete) return;
     const { targetCell, value } = this.activeHint;
@@ -243,7 +239,6 @@ export class GameEngine {
     const peerClears = this.clearPeerNotes(targetCell, value);
     const after = [this.snapshot(targetCell), ...peerClears.after];
 
-    this.hintsRemaining -= 1;
     const scoreDelta = this.addScore(-HINT_PENALTY + this.unitCompletionBonus(targetCell));
 
     this.history.push({
@@ -252,7 +247,6 @@ export class GameEngine {
       after,
       mistakeDelta: 0,
       scoreDelta,
-      hintDelta: -1,
     });
 
     this.activeHint = null;
@@ -261,13 +255,12 @@ export class GameEngine {
   }
 
   // Resets the current puzzle back to its initial given-cells state (SPEC
-  // §5) — a fresh attempt, so mistakes/score/hints/timer reset too.
+  // §5) — a fresh attempt, so mistakes/score/timer reset too.
   restart(): void {
     this.grid = this.buildInitialGrid();
     this.selectedCell = null;
     this.notesMode = false;
     this.mistakes = 0;
-    this.hintsRemaining = STARTING_HINTS;
     this.score = 0;
     this.elapsedMs = 0;
     this.isPaused = false;

@@ -59,11 +59,11 @@
   <section>
     <h2>Hints</h2>
     <p>
-      Stuck? Use a <strong>Hint</strong>. Each puzzle gives you a limited number of hints, and each
-      one walks you through a real deduction step by step — naming the technique, highlighting the
-      relevant cells, and explaining why a particular digit must go in a particular cell — rather
-      than just filling in a random answer. Applying a hint commits the digit as a final answer,
-      but costs you points — solving cells yourself is always worth more.
+      Stuck? Use a <strong>Hint</strong>, as many times as you need. Each one walks you through a
+      real deduction step by step — naming the technique, highlighting the relevant cells, and
+      explaining why a particular digit must go in a particular cell — rather than just filling in
+      a random answer. Applying a hint commits the digit as a final answer, but costs you points —
+      solving cells yourself is always worth more.
     </p>
   </section>
 

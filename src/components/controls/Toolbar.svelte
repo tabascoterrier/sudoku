@@ -9,7 +9,6 @@
 
   const engine = $derived(gameStore.engine);
   const notesMode = $derived(engine?.notesMode ?? false);
-  const hintsRemaining = $derived(engine?.hintsRemaining ?? 0);
   const canUndo = $derived((engine?.history.length ?? 0) > 0);
   const hasSelection = $derived(engine?.selectedCell != null);
   const isPaused = $derived(engine?.isPaused ?? false);
@@ -52,10 +51,9 @@
     <span class="label">Notes</span>
   </button>
 
-  <button type="button" class="tool" onclick={handleHint} disabled={hintsRemaining <= 0 || isPaused || isGameOver}>
+  <button type="button" class="tool" onclick={handleHint} disabled={isPaused || isGameOver}>
     <span class="icon" aria-hidden="true">💡</span>
     <span class="label">Hint</span>
-    <span class="badge">{hintsRemaining}</span>
   </button>
 
   <button type="button" class="tool" onclick={handlePauseToggle} disabled={isGameOver}>
@@ -79,7 +77,6 @@
   }
 
   .tool {
-    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -123,17 +120,5 @@
 
   .label {
     font-size: 0.7rem;
-  }
-
-  .badge {
-    position: absolute;
-    top: 0;
-    right: 0.5rem;
-    background: var(--accent, #1b6ef3);
-    color: #fff;
-    font-size: 0.6rem;
-    line-height: 1;
-    padding: 0.15rem 0.35rem;
-    border-radius: 999px;
   }
 </style>
