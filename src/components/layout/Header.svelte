@@ -48,6 +48,8 @@
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
+    max-width: 960px;
+    margin-inline: auto;
     padding: 0.75rem 1rem;
   }
 
