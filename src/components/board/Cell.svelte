@@ -89,6 +89,10 @@
 </script>
 
 {#if exists}
+  <!-- col/row 8 excluded from right-edge/bottom-edge below: the outer board
+       border already covers that edge, so the extra box-separator border
+       would stack on top of it and make the right/bottom edges look
+       heavier than left/top. -->
   <button
     {id}
     type="button"
@@ -100,8 +104,8 @@
     aria-label={ariaLabel()}
     tabindex={isSelected ? 0 : -1}
     class="cell"
-    class:right-edge={col % 3 === 2}
-    class:bottom-edge={row % 3 === 2}
+    class:right-edge={col % 3 === 2 && col !== 8}
+    class:bottom-edge={row % 3 === 2 && row !== 8}
     class:given
     class:selected={isSelected}
     class:peer={isPeer}
