@@ -6,6 +6,7 @@
   --board-bg: #fff;
   --cell-bg: #fff;
   --cell-fg: #1a1a1a;
+  --cell-entry-fg: #1b6ef3;
   --cell-peer-bg: #eaf1fb;
   --cell-samevalue-bg: #d6e6fb;
   --cell-selected-bg: #bcd8ff;
@@ -40,6 +41,7 @@
     --board-bg: #1e1e1e;
     --cell-bg: #1e1e1e;
     --cell-fg: #f0f0f0;
+    --cell-entry-fg: #5b9dff;
     --cell-peer-bg: #23324a;
     --cell-samevalue-bg: #2c4570;
     --cell-selected-bg: #2f5fa8;
@@ -74,6 +76,7 @@
   --board-bg: #1e1e1e;
   --cell-bg: #1e1e1e;
   --cell-fg: #f0f0f0;
+  --cell-entry-fg: #5b9dff;
   --cell-peer-bg: #23324a;
   --cell-samevalue-bg: #2c4570;
   --cell-selected-bg: #2f5fa8;
@@ -107,6 +110,7 @@
   --board-bg: #fff;
   --cell-bg: #fff;
   --cell-fg: #1a1a1a;
+  --cell-entry-fg: #1b6ef3;
   --cell-peer-bg: #eaf1fb;
   --cell-samevalue-bg: #d6e6fb;
   --cell-selected-bg: #bcd8ff;

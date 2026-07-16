@@ -176,6 +176,14 @@
     outline-offset: -2px;
   }
 
+  /* Player-entered digits read as a distinct color from givens (same weight,
+     just a color shift) so it's clear at a glance which cells are locked
+     clues and which are the player's own work — error color still wins for
+     a confirmed mistake. */
+  .cell:not(.given):not(.error) .value {
+    color: var(--cell-entry-fg, #1b6ef3);
+  }
+
   .cell.error {
     color: var(--cell-error-fg, #d33);
   }
