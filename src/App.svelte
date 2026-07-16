@@ -24,6 +24,14 @@
   });
 
   function selectDifficulty(next: Difficulty): void {
+    // Navigating to the difficulty we're already on is a no-op for the
+    // router, so GamePage's route-driven puzzle-load effect never fires.
+    // Force a fresh puzzle directly in that case (e.g. "New Game" after
+    // winning, reselecting the same tier).
+    if (next === currentDifficulty) {
+      gameStore.loadPuzzle(next, true);
+      return;
+    }
     router.navigate(pathForDifficulty(next));
   }
 
