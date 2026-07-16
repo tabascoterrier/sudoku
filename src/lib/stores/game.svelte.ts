@@ -116,6 +116,7 @@ class GameStore {
       const delta = now - last;
       last = now;
       this.engine?.tick(delta);
+      this.touch();
       this.save();
     }, 1000);
   }
