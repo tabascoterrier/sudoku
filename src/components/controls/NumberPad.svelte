@@ -39,7 +39,7 @@
        rectangle on mobile and stay near-square on wider boards. */
     width: 100%;
     min-height: 3rem;
-    font-size: clamp(1rem, 3.5vw, 1.4rem);
+    font-size: clamp(1.2rem, 3.5vw, 1.4rem);
     font-weight: 600;
     border: 1px solid var(--control-border, #ccc);
     border-radius: 0.4rem;

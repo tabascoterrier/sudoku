@@ -17,7 +17,7 @@
 
 <div class="status-bar">
   <div class="stat score" aria-label="Score">
-    <span class="icon" aria-hidden="true">🏆</span>
+    <span class="stat-title">Score</span>
     <span>{score}</span>
   </div>
   <div class="stat mistakes" aria-label="Mistakes">
@@ -55,10 +55,5 @@
     text-transform: uppercase;
     letter-spacing: 0.03em;
     color: var(--muted-fg, #777);
-  }
-
-  .score {
-    flex-direction: row;
-    gap: 0.3rem;
   }
 </style>

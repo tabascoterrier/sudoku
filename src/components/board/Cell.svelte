@@ -144,7 +144,7 @@
     border: 1px solid var(--board-line, #ccc);
     background: var(--cell-bg, #fff);
     color: var(--cell-fg, #1a1a1a);
-    font-size: clamp(0.9rem, 4.2vw, 1.6rem);
+    font-size: clamp(1.15rem, 4.2vw, 1.6rem);
     font-family: inherit;
     cursor: pointer;
     padding: 0;
