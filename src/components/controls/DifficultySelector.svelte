@@ -45,6 +45,7 @@
 <style>
   .tabs {
     display: flex;
+    justify-content: center;
     gap: 0.4rem;
   }
 
