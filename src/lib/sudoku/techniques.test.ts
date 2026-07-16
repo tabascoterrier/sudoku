@@ -76,8 +76,8 @@ describe('buildHint', () => {
     expect(hint.technique).toBe('naked-single');
     expect(hint.targetCell).toBe(targetCell);
     expect(hint.value).toBe(SOLUTION[targetCell]);
-    expect(hint.steps).toHaveLength(3);
-    expect(hint.steps[2].ghostValue).toBe(SOLUTION[targetCell]);
+    expect(hint.steps).toHaveLength(2);
+    expect(hint.steps[1].ghostValue).toBe(SOLUTION[targetCell]);
   });
 
   it('falls back to a generic (non-technique) reveal when neither single exists, and never lies about a technique', () => {
@@ -91,7 +91,7 @@ describe('buildHint', () => {
     const hint = buildHint(board, SOLUTION);
     expect(hint.technique).toBeNull();
     expect(hint.value).toBe(SOLUTION[hint.targetCell]);
-    expect(hint.steps).toHaveLength(3);
+    expect(hint.steps).toHaveLength(2);
     // Fallback copy must not claim a named technique.
     for (const step of hint.steps) {
       expect(step.title.toLowerCase()).not.toContain('single');
@@ -126,7 +126,7 @@ describe('buildHint', () => {
     expect(hint.technique).toBe('hidden-single');
     expect(hint.targetCell).toBe(0);
     expect(hint.value).toBe(8);
-    expect(hint.steps[1].body).toBe('In this block, there is only one cell remaining that can contain 8.');
-    expect(hint.steps[2].ghostValue).toBe(8);
+    expect(hint.steps[0].body).toBe('In this block, there is only one cell remaining that can contain 8.');
+    expect(hint.steps[1].ghostValue).toBe(8);
   });
 });

@@ -24,7 +24,7 @@ export interface Hint {
   technique: TechniqueName;
   targetCell: number;
   value: number;
-  steps: [HintStep, HintStep, HintStep];
+  steps: [HintStep, HintStep];
 }
 
 export interface NakedSingleResult {
@@ -143,7 +143,7 @@ function findFallbackCell(board: Board): number {
   return bestCell;
 }
 
-// Builds the 3-step guided hint walkthrough (SPEC §7). Tries naked single,
+// Builds the 2-step guided hint walkthrough (SPEC §7). Tries naked single,
 // then hidden single; if neither named technique applies, honestly falls
 // back to a generic reveal rather than claiming a technique that wasn't used.
 export function buildHint(board: Board, solution: Board): Hint {
@@ -157,15 +157,9 @@ export function buildHint(board: Board, solution: Board): Hint {
       steps: [
         {
           title: 'Only Choice',
-          body: 'Pay attention to this cell and the highlighted areas.',
+          body: `This cell has only one possible candidate remaining: ${value}. Every other digit already appears among its highlighted row, column, or box peers.`,
           dimmed: true,
           highlightCells: [cell, ...PEERS[cell]],
-        },
-        {
-          title: 'Only Choice',
-          body: `This cell has only one possible candidate remaining: ${value}.`,
-          dimmed: true,
-          highlightCells: [cell],
         },
         {
           title: 'Only Choice',
@@ -189,15 +183,9 @@ export function buildHint(board: Board, solution: Board): Hint {
       steps: [
         {
           title: 'Last Remaining Cell',
-          body: 'Pay attention to these cells and the highlighted areas.',
-          dimmed: true,
-          highlightCells: placedDigitCells(board, value),
-        },
-        {
-          title: 'Last Remaining Cell',
           body: `In this ${label}, there is only one cell remaining that can contain ${value}.`,
           dimmed: true,
-          highlightCells: [...cellsForScope(scope)],
+          highlightCells: [...cellsForScope(scope), ...placedDigitCells(board, value)],
           highlightScope: scope,
         },
         {
@@ -221,13 +209,7 @@ export function buildHint(board: Board, solution: Board): Hint {
     steps: [
       {
         title: 'Next Step',
-        body: "Let's fill in another cell.",
-        dimmed: false,
-        highlightCells: [cell],
-      },
-      {
-        title: 'Next Step',
-        body: 'This one needs a more advanced technique than we can walk through step by step.',
+        body: 'This one needs a more advanced technique than we can walk through step by step — let’s just fill it in.',
         dimmed: false,
         highlightCells: [cell],
       },

@@ -208,16 +208,15 @@ describe('hints', () => {
     expect(isolated.requestHint()).toBeNull(); // no hints once the puzzle is solved
   });
 
-  it('advances and retreats through the 3-step walkthrough without exceeding its bounds', () => {
+  it('advances and retreats through the 2-step walkthrough without exceeding its bounds', () => {
     engine.requestHint();
     expect(engine.hintStepIndex).toBe(0);
     engine.nextHintStep();
-    engine.nextHintStep();
-    expect(engine.hintStepIndex).toBe(2);
-    engine.nextHintStep(); // clamps at last step
-    expect(engine.hintStepIndex).toBe(2);
-    engine.prevHintStep();
     expect(engine.hintStepIndex).toBe(1);
+    engine.nextHintStep(); // clamps at last step
+    expect(engine.hintStepIndex).toBe(1);
+    engine.prevHintStep();
+    expect(engine.hintStepIndex).toBe(0);
   });
 });
 
