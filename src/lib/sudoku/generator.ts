@@ -3,6 +3,7 @@ import { DIFFICULTY_BANDS, TIME_BUDGET_MS } from './difficulty';
 import { BOX_CELLS } from './peers';
 import { defaultRng, shuffle, type RNG } from './rng';
 import { pickBranchCell, solveCount } from './solver';
+import { isSolvableByBasicTechniques } from './techniques';
 import type { Board, Difficulty, Puzzle } from './types';
 
 // Generates a fully solved, random, valid 9x9 grid. The three diagonal boxes
@@ -41,11 +42,18 @@ export function generateSolvedGrid(rng: RNG): Board {
 // exhausted (whichever comes first). `deadline` is an absolute
 // performance.now()-based timestamp; digging stops early if it's exceeded,
 // returning whatever given-count was reached so far.
+//
+// When `requireBasicTechniques` is set, a removal is also rejected if it
+// would leave the puzzle unsolvable by naked/hidden singles alone — this is
+// what keeps Easy puzzles solvable via the same simple techniques the hint
+// system teaches, rather than merely unique-per-the-backtracking-solver
+// (which says nothing about how hard the deductions are for a human).
 export function digPuzzle(
   solved: Board,
   targetGivens: number,
   rng: RNG,
   deadline: number,
+  requireBasicTechniques = false,
 ): { board: Board; givens: number } {
   const board = solved.slice() as Board;
   const order = shuffle(
@@ -57,7 +65,9 @@ export function digPuzzle(
     if (givens <= targetGivens || performance.now() > deadline) break;
     const backup = board[index];
     board[index] = 0;
-    if (solveCount(board, 2) === 1) {
+    const keep =
+      solveCount(board, 2) === 1 && (!requireBasicTechniques || isSolvableByBasicTechniques(board));
+    if (keep) {
       givens--;
     } else {
       board[index] = backup;
@@ -84,12 +94,13 @@ export function generatePuzzle(
 ): Puzzle {
   const band = DIFFICULTY_BANDS[difficulty];
   const deadline = performance.now() + timeBudgetMs;
+  const requireBasicTechniques = difficulty === 'easy';
 
   let best: { board: Board; solved: Board; givens: number } | null = null;
 
   while (performance.now() < deadline) {
     const solved = generateSolvedGrid(rng);
-    const { board, givens } = digPuzzle(solved, band.min, rng, deadline);
+    const { board, givens } = digPuzzle(solved, band.min, rng, deadline, requireBasicTechniques);
     if (!best || givens < best.givens) {
       best = { board, solved, givens };
     }
@@ -101,7 +112,7 @@ export function generatePuzzle(
     // a test) — fall back to one untimed attempt so we still return a valid,
     // uniquely-solvable puzzle rather than throwing.
     const solved = generateSolvedGrid(rng);
-    const { board, givens } = digPuzzle(solved, band.min, rng, Infinity);
+    const { board, givens } = digPuzzle(solved, band.min, rng, Infinity, requireBasicTechniques);
     best = { board, solved, givens };
   }
 

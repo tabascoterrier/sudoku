@@ -90,6 +90,28 @@ export function findHiddenSingle(board: Board): HiddenSingleResult | null {
   return null;
 }
 
+// Whether `board` can be fully completed using only naked/hidden singles —
+// the same two techniques the hint system names — with no guessing or more
+// advanced deduction required. Used by the generator to keep Easy puzzles
+// solvable by beginners, not just uniquely solvable by brute force.
+export function isSolvableByBasicTechniques(board: Board): boolean {
+  const working = board.slice() as Board;
+  for (;;) {
+    const naked = findNakedSingle(working);
+    if (naked) {
+      working[naked.cell] = naked.value;
+      continue;
+    }
+    const hidden = findHiddenSingle(working);
+    if (hidden) {
+      working[hidden.cell] = hidden.value;
+      continue;
+    }
+    break;
+  }
+  return working.every((v) => v !== 0);
+}
+
 function scopeLabel(type: ScopeType): string {
   if (type === 'row') return 'row';
   if (type === 'col') return 'column';

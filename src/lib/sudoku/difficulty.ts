@@ -8,7 +8,7 @@ export interface GivenBand {
 // Difficulty is implemented as givens density (SPEC §3): easier puzzles start
 // with more pre-filled cells.
 export const DIFFICULTY_BANDS: Record<Difficulty, GivenBand> = {
-  easy: { min: 36, max: 40 },
+  easy: { min: 40, max: 46 },
   medium: { min: 32, max: 35 },
   hard: { min: 28, max: 31 },
   expert: { min: 24, max: 27 },
