@@ -54,15 +54,29 @@
     aria-pressed={paintMode}
     disabled={isPaused || isGameOver}
   >
-    <!-- U+FE0E forces text presentation: 🖌 otherwise defaults to a colorful
-         emoji brush that clashes with the other toolbar icons' plain
-         outline style (see the pause icon below for the same fix). -->
-    <span class="icon" aria-hidden="true">🖌︎</span>
+    <!-- Paintbrush has no text-presentation variant (unlike ✎/⏸ below), so
+         U+FE0E can't force it monochrome — iOS always renders it in color.
+         Use an outline SVG with currentColor instead, to match the other
+         toolbar icons' plain outline style. -->
+    <span class="icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 21c1-4 2-6 4-7l9-9a2 2 0 0 1 3 3l-9 9c-1 2-3 3-7 4Z" />
+        <path d="M14 6l4 4" />
+      </svg>
+    </span>
     <span class="label">Paint</span>
   </button>
 
   <button type="button" class="tool" onclick={handleHint} disabled={isPaused || isGameOver}>
-    <span class="icon" aria-hidden="true">💡</span>
+    <!-- Light bulb is emoji-only (no text-presentation variant), so it
+         always renders in color on iOS. Use an outline SVG with
+         currentColor instead, same reasoning as the paint icon above. -->
+    <span class="icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 18h6M10 21h4" />
+        <path d="M12 3a6 6 0 0 0-3.6 10.8c.6.46 1.1 1.24 1.1 2.2h5c0-.96.5-1.74 1.1-2.2A6 6 0 0 0 12 3Z" />
+      </svg>
+    </span>
     <span class="label">Hint</span>
   </button>
 
