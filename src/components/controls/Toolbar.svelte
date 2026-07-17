@@ -86,12 +86,19 @@
 
   /* A single row of 6 tools doesn't fit the narrow right-hand column of the
      landscape layout — wrapping into 3 columns keeps each tool a legible
-     size instead of squeezing all 6 into ~250px of width. */
-  @media (orientation: landscape) and (max-height: 600px) {
+     size instead of squeezing all 6 into ~250px of width. Capped at
+     max-width rather than the column's full width: this breakpoint also
+     covers tablet-width columns (e.g. a 1024x768 iPad), where stretching
+     to fill would space the 6 tools out across the whole column instead
+     of keeping them a compact, thumb-reachable cluster. */
+  @media (orientation: landscape) and (max-height: 900px) {
     .toolbar {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 0.3rem;
+      width: 100%;
+      max-width: 20rem;
+      justify-self: center;
     }
   }
 
@@ -112,7 +119,7 @@
   /* Two rows of icon+label in the landscape side column have to fit
      alongside the stats row and the number pad, not just each other —
      shrink the icon/label/padding so both rows stay compact. */
-  @media (orientation: landscape) and (max-height: 600px) {
+  @media (orientation: landscape) and (max-height: 900px) {
     .tool {
       gap: 0.05rem;
       padding: 0.1rem 0.1rem;
@@ -156,7 +163,7 @@
     font-size: 0.7rem;
   }
 
-  @media (orientation: landscape) and (max-height: 600px) {
+  @media (orientation: landscape) and (max-height: 900px) {
     .icon {
       font-size: 1rem;
       width: 1.4rem;

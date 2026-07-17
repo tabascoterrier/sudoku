@@ -145,7 +145,7 @@
   /* Bottom-center spanning the full width covers the number pad/toolbar
      column in the board-left/controls-right landscape layout, so pin it
      over the board side instead, narrow enough to clear the controls. */
-  @media (orientation: landscape) and (max-height: 600px) {
+  @media (orientation: landscape) and (max-height: 900px) {
     .hint-card {
       left: 1rem;
       bottom: 0.5rem;

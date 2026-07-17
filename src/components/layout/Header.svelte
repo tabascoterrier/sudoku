@@ -118,7 +118,7 @@
     }
   }
 
-  @media (orientation: landscape) and (max-height: 600px) {
+  @media (orientation: landscape) and (max-height: 900px) {
     .site-header {
       padding-block: 0.2rem;
     }

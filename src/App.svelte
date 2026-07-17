@@ -64,7 +64,7 @@
 {/if}
 
 <style>
-  @media (orientation: landscape) and (max-height: 600px) {
+  @media (orientation: landscape) and (max-height: 900px) {
     main {
       flex: 1;
       min-height: 0;

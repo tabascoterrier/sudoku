@@ -70,13 +70,14 @@
     }
   }
 
-  /* Short landscape viewports (a phone on its side) don't have the vertical
-     room for the portrait stack — header, stats, board, numpad, and toolbar
-     together run taller than the screen, forcing a mid-game scroll to reach
-     the controls. Re-flowing into board-left/controls-right fits everything
-     in view without touching DOM/tab order, so keyboard and screen-reader
-     navigation still moves stats → board → numpad → toolbar. */
-  @media (orientation: landscape) and (max-height: 600px) {
+  /* Landscape viewports without the vertical room for the portrait stack —
+     a phone on its side, or a tablet like a 1024x768 iPad — don't fit
+     header, stats, board, numpad, and toolbar stacked (~813px tall),
+     forcing a mid-game scroll to reach the controls. Re-flowing into
+     board-left/controls-right fits everything in view without touching
+     DOM/tab order, so keyboard and screen-reader navigation still moves
+     stats → board → numpad → toolbar. */
+  @media (orientation: landscape) and (max-height: 900px) {
     .game-page {
       height: 100%;
       max-width: none;
@@ -114,9 +115,17 @@
     position: relative;
   }
 
-  @media (orientation: landscape) and (max-height: 600px) {
+  @media (orientation: landscape) and (max-height: 900px) {
     .board-wrapper {
       height: 100%;
+      /* The board itself caps at 480px (Board.svelte) — on a short phone
+         column that's close to the wrapper's full height anyway, but on a
+         taller tablet column it would otherwise sit pinned to the top with
+         dead space below. Centering keeps it level with the numpad/toolbar
+         cluster docked at the bottom of the opposite column. */
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   }
 

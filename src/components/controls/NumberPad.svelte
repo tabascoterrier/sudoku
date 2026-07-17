@@ -55,13 +55,29 @@
 
   /* 9-across no longer fits comfortably once the number pad is squeezed
      into the narrow right-hand column of the landscape layout — 3x3 keeps
-     each button a legible, tappable size. */
-  @media (orientation: landscape) and (max-height: 600px) {
+     each button a legible, tappable size. height:100% still lets it shrink
+     to fit a short phone column's modest leftover space, but max-height
+     caps how far it can grow on a tablet-tall column (this same breakpoint
+     also covers e.g. a 1024x768 iPad) — otherwise filling that leftover
+     1fr row would blow each button up to an oversized square. (Deliberately
+     not aspect-ratio: 1 — that would force the height to follow the
+     width even on a narrow-but-short phone column, overflowing it.) */
+  @media (orientation: landscape) and (max-height: 900px) {
     .number-pad {
       grid-template-columns: repeat(3, minmax(0, 1fr));
       grid-template-rows: repeat(3, minmax(0, 1fr));
       gap: 0.25rem;
+      width: 100%;
+      max-width: 20rem;
       height: 100%;
+      max-height: 20rem;
+      justify-self: center;
+      /* The numpad's row is 1fr so the board (which spans all three
+         right-column rows) can reach its full height — on a tablet-tall
+         column that leaves a lot of slack in this row. Docking to the
+         bottom keeps the numpad snug against the toolbar below it instead
+         of floating centered with a gap on both sides. */
+      align-self: end;
     }
   }
 
@@ -91,7 +107,7 @@
      landscape, where the pad's whole 3-row height has to fit next to it.
      Let each button fill its grid cell and fall back to a much smaller
      floor only as a last resort, instead of forcing an overflow. */
-  @media (orientation: landscape) and (max-height: 600px) {
+  @media (orientation: landscape) and (max-height: 900px) {
     .digit {
       height: 100%;
       min-height: 1.5rem;
