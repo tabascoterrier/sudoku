@@ -141,4 +141,21 @@
     border-color: var(--accent, #1b6ef3);
     color: #fff;
   }
+
+  /* Bottom-center spanning the full width covers the number pad/toolbar
+     column in the board-left/controls-right landscape layout, so pin it
+     over the board side instead, narrow enough to clear the controls. */
+  @media (orientation: landscape) and (max-height: 600px) {
+    .hint-card {
+      left: 1rem;
+      bottom: 0.5rem;
+      transform: none;
+      width: min(60vw, 360px);
+      padding: 0.75rem 1rem;
+    }
+
+    .body {
+      margin-bottom: 0.6rem;
+    }
+  }
 </style>

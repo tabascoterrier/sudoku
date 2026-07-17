@@ -50,8 +50,13 @@
 
 <style>
   .game-page {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-areas:
+      'stats'
+      'board'
+      'numpad'
+      'toolbar';
+    grid-template-rows: auto auto auto auto;
     gap: 0.9rem;
     max-width: 620px;
     margin: 0 auto;
@@ -65,8 +70,54 @@
     }
   }
 
+  /* Short landscape viewports (a phone on its side) don't have the vertical
+     room for the portrait stack — header, stats, board, numpad, and toolbar
+     together run taller than the screen, forcing a mid-game scroll to reach
+     the controls. Re-flowing into board-left/controls-right fits everything
+     in view without touching DOM/tab order, so keyboard and screen-reader
+     navigation still moves stats → board → numpad → toolbar. */
+  @media (orientation: landscape) and (max-height: 600px) {
+    .game-page {
+      height: 100%;
+      max-width: none;
+      grid-template-areas:
+        'board stats'
+        'board numpad'
+        'board toolbar';
+      grid-template-columns: auto 1fr;
+      grid-template-rows: auto 1fr auto;
+      align-items: center;
+      justify-content: center;
+      gap: 0.2rem 1.25rem;
+      padding: 0.15rem 0.75rem;
+      /* viewport-fit=cover (index.html) lets content draw under the home
+         indicator on notched/indicator phones — without this, the toolbar's
+         bottom row ends up drawn underneath (and obscured by) it. */
+      padding-bottom: max(0.15rem, env(safe-area-inset-bottom));
+    }
+  }
+
+  .game-page > :global(.status-bar) {
+    grid-area: stats;
+  }
+
+  .game-page > :global(.number-pad) {
+    grid-area: numpad;
+  }
+
+  .game-page > :global(.toolbar) {
+    grid-area: toolbar;
+  }
+
   .board-wrapper {
+    grid-area: board;
     position: relative;
+  }
+
+  @media (orientation: landscape) and (max-height: 600px) {
+    .board-wrapper {
+      height: 100%;
+    }
   }
 
   .loading {

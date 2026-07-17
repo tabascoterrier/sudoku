@@ -53,6 +53,18 @@
     margin-inline: auto;
   }
 
+  /* 9-across no longer fits comfortably once the number pad is squeezed
+     into the narrow right-hand column of the landscape layout — 3x3 keeps
+     each button a legible, tappable size. */
+  @media (orientation: landscape) and (max-height: 600px) {
+    .number-pad {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-rows: repeat(3, minmax(0, 1fr));
+      gap: 0.25rem;
+      height: 100%;
+    }
+  }
+
   .digit {
     /* Width tracks the grid column (no aspect-ratio) so on narrow phones,
        where 9-across leaves little width per button, min-height can floor
@@ -73,6 +85,18 @@
   .digit:disabled {
     opacity: 0.4;
     cursor: default;
+  }
+
+  /* The 3rem floor above assumes ample height below the board — not true in
+     landscape, where the pad's whole 3-row height has to fit next to it.
+     Let each button fill its grid cell and fall back to a much smaller
+     floor only as a last resort, instead of forcing an overflow. */
+  @media (orientation: landscape) and (max-height: 600px) {
+    .digit {
+      height: 100%;
+      min-height: 1.5rem;
+      font-size: clamp(1rem, 3vw, 1.3rem);
+    }
   }
 
   /* Guarded to real hover-capable pointers — see Toolbar.svelte for why. */

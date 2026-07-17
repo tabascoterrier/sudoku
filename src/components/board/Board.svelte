@@ -118,6 +118,18 @@
     grid-template-columns: repeat(9, minmax(0, 1fr));
   }
 
+  /* In the board-left/controls-right landscape layout, the constrained
+     dimension is height, not width — drive sizing from the height the grid
+     area was given and let aspect-ratio derive the width, the mirror image
+     of the portrait rule above it. */
+  @media (orientation: landscape) and (max-height: 600px) {
+    .board {
+      width: auto;
+      height: min(100%, 480px);
+      margin-inline: 0;
+    }
+  }
+
   .sr-only {
     position: absolute;
     width: 1px;

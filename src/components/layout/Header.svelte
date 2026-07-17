@@ -117,4 +117,10 @@
       display: block;
     }
   }
+
+  @media (orientation: landscape) and (max-height: 600px) {
+    .site-header {
+      padding-block: 0.2rem;
+    }
+  }
 </style>

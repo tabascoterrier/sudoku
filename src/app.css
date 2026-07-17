@@ -161,3 +161,26 @@ body {
 button {
   touch-action: manipulation;
 }
+
+/* On short landscape viewports (phones rotated sideways), the portrait
+   column layout (header, stats, board, numpad, toolbar all stacked) is
+   taller than the screen, forcing a scroll to reach the controls mid-game.
+   #app becomes a column flexbox spanning the full dynamic viewport height so
+   <main> (and beneath it, GamePage) can be given a definite height to lay
+   the board and controls out side by side instead of stacked. */
+@media (orientation: landscape) and (max-height: 600px) {
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    height: 100dvh;
+  }
+
+  #app {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+}

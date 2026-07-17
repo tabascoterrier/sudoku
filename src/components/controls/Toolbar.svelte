@@ -84,6 +84,17 @@
     margin-inline: auto;
   }
 
+  /* A single row of 6 tools doesn't fit the narrow right-hand column of the
+     landscape layout — wrapping into 3 columns keeps each tool a legible
+     size instead of squeezing all 6 into ~250px of width. */
+  @media (orientation: landscape) and (max-height: 600px) {
+    .toolbar {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.3rem;
+    }
+  }
+
   .tool {
     display: flex;
     flex-direction: column;
@@ -96,6 +107,16 @@
     color: var(--control-fg, #1a1a1a);
     cursor: pointer;
     border-radius: 0.4rem;
+  }
+
+  /* Two rows of icon+label in the landscape side column have to fit
+     alongside the stats row and the number pad, not just each other —
+     shrink the icon/label/padding so both rows stay compact. */
+  @media (orientation: landscape) and (max-height: 600px) {
+    .tool {
+      gap: 0.05rem;
+      padding: 0.1rem 0.1rem;
+    }
   }
 
   .tool:disabled {
@@ -133,5 +154,17 @@
 
   .label {
     font-size: 0.7rem;
+  }
+
+  @media (orientation: landscape) and (max-height: 600px) {
+    .icon {
+      font-size: 1rem;
+      width: 1.4rem;
+      height: 1.4rem;
+    }
+
+    .label {
+      font-size: 0.6rem;
+    }
   }
 </style>

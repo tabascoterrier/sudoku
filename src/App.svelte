@@ -62,3 +62,13 @@
     onRestart={handleRestart}
   />
 {/if}
+
+<style>
+  @media (orientation: landscape) and (max-height: 600px) {
+    main {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+    }
+  }
+</style>
