@@ -1,6 +1,13 @@
 import { beforeEach, describe, expect, it } from 'vitest';
+import { PAR_TIME_MS } from './difficulty';
 import { GameEngine } from './gameEngine';
-import { CORRECT_ENTRY_SCORE, HINT_PENALTY, MISTAKE_PENALTY, UNIT_COMPLETE_BONUS } from './scoring';
+import {
+  CORRECT_ENTRY_SCORE,
+  HINT_PENALTY,
+  MAX_TIME_BONUS,
+  MISTAKE_PENALTY,
+  UNIT_COMPLETE_BONUS,
+} from './scoring';
 import type { Board, Puzzle } from './types';
 
 const SOLUTION = Uint8Array.from([
@@ -335,10 +342,11 @@ describe('scoring', () => {
 
   it('stacks a bonus per unit when one entry completes several at once', () => {
     // The lone empty cell in the whole grid completes its row, column, and
-    // box in the same move.
+    // box in the same move — and the puzzle itself, earning the full time
+    // bonus too since elapsedMs is still 0.
     const e = new GameEngine(makePuzzleWithEmpties([40]));
     e.setValue(40, SOLUTION[40]);
-    expect(e.score).toBe(CORRECT_ENTRY_SCORE + 3 * UNIT_COMPLETE_BONUS);
+    expect(e.score).toBe(CORRECT_ENTRY_SCORE + 3 * UNIT_COMPLETE_BONUS + MAX_TIME_BONUS);
   });
 
   it('deducts the hint penalty from existing points, on top of any unit bonus the hinted digit completes', () => {
@@ -367,6 +375,29 @@ describe('win detection', () => {
     expect(engine.isComplete).toBe(false);
     engine.setValue(40, SOLUTION[40]);
     expect(engine.isComplete).toBe(true);
+  });
+
+  it('awards the full time bonus when completed at or under par', () => {
+    const e = new GameEngine(makePuzzleWithEmpties([40]));
+    e.tick(PAR_TIME_MS.easy);
+    e.setValue(40, SOLUTION[40]);
+    expect(e.score).toBe(CORRECT_ENTRY_SCORE + 3 * UNIT_COMPLETE_BONUS + MAX_TIME_BONUS);
+  });
+
+  it('tapers the time bonus linearly between par and double par', () => {
+    const e = new GameEngine(makePuzzleWithEmpties([40]));
+    const parMs = PAR_TIME_MS.easy;
+    e.tick(parMs + parMs / 2); // halfway between par and the double-par cap
+    e.setValue(40, SOLUTION[40]);
+    const expectedBonus = Math.round(MAX_TIME_BONUS / 2);
+    expect(e.score).toBe(CORRECT_ENTRY_SCORE + 3 * UNIT_COMPLETE_BONUS + expectedBonus);
+  });
+
+  it('awards no time bonus once double par has elapsed', () => {
+    const e = new GameEngine(makePuzzleWithEmpties([40]));
+    e.tick(PAR_TIME_MS.easy * 2);
+    e.setValue(40, SOLUTION[40]);
+    expect(e.score).toBe(CORRECT_ENTRY_SCORE + 3 * UNIT_COMPLETE_BONUS);
   });
 });
 

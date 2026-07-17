@@ -1,5 +1,6 @@
+import { PAR_TIME_MS } from './difficulty';
 import { BOX_CELLS, boxOf, COL_CELLS, colOf, PEERS, ROW_CELLS, rowOf } from './peers';
-import { CORRECT_ENTRY_SCORE, HINT_PENALTY, MISTAKE_PENALTY, UNIT_COMPLETE_BONUS } from './scoring';
+import { CORRECT_ENTRY_SCORE, HINT_PENALTY, MISTAKE_PENALTY, timeBonus, UNIT_COMPLETE_BONUS } from './scoring';
 import { buildHint, type Hint } from './techniques';
 import type { Board, Cell, Puzzle } from './types';
 
@@ -223,6 +224,7 @@ export class GameEngine {
       if (this.grid[i].value !== this.solution[i]) return;
     }
     this.isComplete = true;
+    this.addScore(timeBonus(this.elapsedMs, PAR_TIME_MS[this.puzzle.difficulty]));
   }
 
   requestHint(): Hint | null {
