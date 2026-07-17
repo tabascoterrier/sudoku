@@ -1,36 +1,38 @@
 # Sudoku
 
-A fast, installable Sudoku game that runs entirely in your browser. Puzzles are generated
-on demand by a solver running in a Web Worker, so there's an endless supply at four
-difficulty levels.
+A fast, installable Sudoku game that runs entirely in your browser. Puzzles are generated on 
+demand by a Web Worker, so there's an endless supply across four difficulty levels.
 
 ## Playing
 
-Fill the 9×9 grid so that every row, every column, and every 3×3 box contains each
-digit 1–9 exactly once.
+Fill the 9×9 grid so every row, column, and 3×3 box ends up with each digit 1–9
+exactly once.
 
 - **Select a cell**, then enter a digit with the number pad or your keyboard.
-- **Notes mode** lets you pencil in candidate digits instead of committing an answer.
+- **Notes mode** lets you pencil in candidates instead of committing to an answer.
 - **Undo** steps back through your moves one at a time.
 - **Hints** walk you through a real deduction — naming the technique and explaining
-  why a digit must go where it does — rather than just revealing an answer.
+  why a digit has to go where it does, instead of just handing you the answer.
 
-Choose Easy, Medium, Hard, or Expert from the tabs above the board — each difficulty
-has its own shareable URL (`/easy/`, `/medium/`, `/hard/`, `/expert/`).
+Pick Easy, Medium, Hard, or Expert from the tabs above the board.
 
 ## Scoring
 
-Scoring rewards solving the puzzle yourself:
+Scoring rewards solving it yourself rather than leaning on hints:
 
 | Action | Points |
 |---|---|
 | Correct entry | +10 |
 | Wrong entry | −5 |
-| Completing a row, column, or box | +20 (per unit, stacks if a move completes more than one) |
+| Completing a row, column, or box | +20 (per unit — stacks if one move finishes more than one) |
 | Using a hint | −25 |
 
-Score can never drop below zero. Hints are there to get you unstuck, but working out a
-digit yourself always pays off better than asking for the answer.
+Finish under a difficulty's par time and you'll also pick up a speed bonus, worth up to
+200 points. It tapers off the longer you take past par and disappears once you're at
+double par — but it never turns into a penalty, so there's no rush once it's gone.
+
+Score can't drop below zero. Hints will get you unstuck, but working out a digit
+yourself always pays better than asking for the answer.
 
 ## Installing
 
