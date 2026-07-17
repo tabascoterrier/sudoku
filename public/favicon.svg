@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="96" fill="#ea580c"/>
+  <rect width="512" height="512" rx="96" fill="#1b6ef3"/>
   <g stroke="#ffffff" stroke-width="20" stroke-linecap="round">
     <line x1="202" y1="94" x2="202" y2="418"/>
     <line x1="310" y1="94" x2="310" y2="418"/>
@@ -7,5 +7,5 @@
     <line x1="94" y1="310" x2="418" y2="310"/>
   </g>
   <rect x="202" y="202" width="108" height="108" rx="18" fill="#ffffff"/>
-  <text x="252" y="292" fill="#ea580c" font-family="system-ui, -apple-system, Arial, sans-serif" font-weight="800" font-size="104" text-anchor="middle">5</text>
+  <text x="252" y="292" fill="#1b6ef3" font-family="system-ui, -apple-system, Arial, sans-serif" font-weight="800" font-size="104" text-anchor="middle">5</text>
 </svg>
