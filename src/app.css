@@ -9,6 +9,7 @@
   --cell-entry-fg: #1b6ef3;
   --cell-peer-bg: #eaf1fb;
   --cell-samevalue-bg: #d6e6fb;
+  --cell-paint-highlight-bg: #dff3e3;
   --cell-selected-bg: #bcd8ff;
   --cell-selected-outline: #1b6ef3;
   --cell-error-fg: #d33;
@@ -44,6 +45,7 @@
     --cell-entry-fg: #5b9dff;
     --cell-peer-bg: #23324a;
     --cell-samevalue-bg: #2c4570;
+    --cell-paint-highlight-bg: #1f3d2a;
     --cell-selected-bg: #2f5fa8;
     --cell-selected-outline: #5b9dff;
     --cell-error-fg: #ff6b6b;
@@ -79,6 +81,7 @@
   --cell-entry-fg: #5b9dff;
   --cell-peer-bg: #23324a;
   --cell-samevalue-bg: #2c4570;
+  --cell-paint-highlight-bg: #1f3d2a;
   --cell-selected-bg: #2f5fa8;
   --cell-selected-outline: #5b9dff;
   --cell-error-fg: #ff6b6b;
@@ -113,6 +116,7 @@
   --cell-entry-fg: #1b6ef3;
   --cell-peer-bg: #eaf1fb;
   --cell-samevalue-bg: #d6e6fb;
+  --cell-paint-highlight-bg: #dff3e3;
   --cell-selected-bg: #bcd8ff;
   --cell-selected-outline: #1b6ef3;
   --cell-error-fg: #d33;

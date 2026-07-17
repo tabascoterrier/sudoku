@@ -3,6 +3,7 @@
 
   const engine = $derived(gameStore.engine);
   const notesMode = $derived(engine?.notesMode ?? false);
+  const paintMode = $derived(engine?.paintMode ?? false);
   const canUndo = $derived((engine?.history.length ?? 0) > 0);
   const hasSelection = $derived(engine?.selectedCell != null);
   const isPaused = $derived(engine?.isPaused ?? false);
@@ -43,6 +44,21 @@
   >
     <span class="icon" aria-hidden="true">✎</span>
     <span class="label">Notes</span>
+  </button>
+
+  <button
+    type="button"
+    class="tool"
+    class:active={paintMode}
+    onclick={() => gameStore.togglePaintMode()}
+    aria-pressed={paintMode}
+    disabled={isPaused || isGameOver}
+  >
+    <!-- U+FE0E forces text presentation: 🖌 otherwise defaults to a colorful
+         emoji brush that clashes with the other toolbar icons' plain
+         outline style (see the pause icon below for the same fix). -->
+    <span class="icon" aria-hidden="true">🖌︎</span>
+    <span class="label">Paint</span>
   </button>
 
   <button type="button" class="tool" onclick={handleHint} disabled={isPaused || isGameOver}>

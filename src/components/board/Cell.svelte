@@ -55,6 +55,17 @@
     return selectedValue !== 0 && selectedValue === value;
   });
 
+  // While painting a digit, gently mark every cell that already carries it
+  // — a committed entry the player made, or a pencil mark — so it's easy to
+  // see at a glance where the digit still needs to go. Givens don't count:
+  // only the player's own work is "found" here.
+  const isPaintDigitPresent = $derived.by(() => {
+    if (currentHintStep) return false;
+    if (!engine?.paintMode || engine.paintDigit == null) return false;
+    if (!given && value === engine.paintDigit) return true;
+    return (notes & (1 << (engine.paintDigit - 1))) !== 0;
+  });
+
   const isHighlightedByHint = $derived(currentHintStep?.highlightCells.includes(index) ?? false);
   const isHintTarget = $derived(isHighlightedByHint && hint?.targetCell === index);
   const isHintSupport = $derived(isHighlightedByHint && !isHintTarget);
@@ -110,6 +121,7 @@
     class:selected={isSelected}
     class:peer={isPeer}
     class:same-value={isSameValue}
+    class:paint-highlight={isPaintDigitPresent}
     class:error={isError}
     class:dimmed={isDimmedByHint}
     class:hint-scope={isInHintScope && !isHighlightedByHint}
@@ -168,6 +180,10 @@
 
   .cell.same-value {
     background: var(--cell-samevalue-bg, #d6e6fb);
+  }
+
+  .cell.paint-highlight {
+    background: var(--cell-paint-highlight-bg, #dff3e3);
   }
 
   .cell.selected {

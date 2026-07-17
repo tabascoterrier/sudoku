@@ -164,6 +164,22 @@ class GameStore {
     this.touch();
   }
 
+  togglePaintMode(): void {
+    this.engine?.togglePaintMode();
+    this.touch();
+  }
+
+  selectPaintDigit(digit: number): void {
+    this.engine?.selectPaintDigit(digit);
+    this.touch();
+  }
+
+  paintCell(index: number): void {
+    this.engine?.paintCell(index);
+    this.touch();
+    this.save();
+  }
+
   requestHint() {
     const hint = this.engine?.requestHint() ?? null;
     this.touch();

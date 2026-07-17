@@ -16,8 +16,14 @@
   }
 
   function selectCell(index: number): void {
-    if (gameStore.engine?.isPaused) return;
-    gameStore.selectCell(index);
+    const engine = gameStore.engine;
+    if (!engine || engine.isPaused) return;
+    if (engine.paintMode && engine.paintDigit != null) {
+      gameStore.paintCell(index);
+      announce(index);
+    } else {
+      gameStore.selectCell(index);
+    }
     focusCell(index);
   }
 

@@ -3,18 +3,40 @@
 
   const engine = $derived(gameStore.engine);
   const hasSelection = $derived(engine?.selectedCell != null);
+  const paintMode = $derived(engine?.paintMode ?? false);
+  const paintDigit = $derived(engine?.paintDigit ?? null);
 
   const digits = Array.from({ length: 9 }, (_, i) => i + 1);
 
+  // In paint mode, a digit press loads (or lifts) the pen instead of
+  // requiring a selected cell — the cell comes from the board tap that
+  // follows, not from `engine.selectedCell`.
   function pressDigit(digit: number): void {
+    if (paintMode) {
+      gameStore.selectPaintDigit(digit);
+      return;
+    }
     if (engine?.selectedCell == null) return;
     gameStore.enterDigit(engine.selectedCell, digit);
+  }
+
+  function digitLabel(digit: number): string {
+    if (!paintMode) return `Enter ${digit}`;
+    return paintDigit === digit ? `Stop painting ${digit}` : `Paint with ${digit}`;
   }
 </script>
 
 <div class="number-pad" role="group" aria-label="Number pad">
   {#each digits as digit (digit)}
-    <button type="button" class="digit" onclick={() => pressDigit(digit)} disabled={!hasSelection} aria-label={`Enter ${digit}`}>
+    <button
+      type="button"
+      class="digit"
+      class:paint-loaded={paintMode && paintDigit === digit}
+      onclick={() => pressDigit(digit)}
+      disabled={!paintMode && !hasSelection}
+      aria-pressed={paintMode ? paintDigit === digit : undefined}
+      aria-label={digitLabel(digit)}
+    >
       {digit}
     </button>
   {/each}
@@ -55,5 +77,11 @@
 
   .digit:not(:disabled):hover {
     background: var(--control-bg-hover, #eef4ff);
+  }
+
+  .digit.paint-loaded {
+    background: var(--accent, #1b6ef3);
+    border-color: var(--accent, #1b6ef3);
+    color: #fff;
   }
 </style>

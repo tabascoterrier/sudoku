@@ -27,6 +27,8 @@ export class GameEngine {
   grid: Cell[];
   selectedCell: number | null = null;
   notesMode = false;
+  paintMode = false;
+  paintDigit: number | null = null;
   mistakes = 0;
   score = 0;
   elapsedMs = 0;
@@ -67,6 +69,30 @@ export class GameEngine {
 
   toggleNotesMode(): void {
     this.notesMode = !this.notesMode;
+  }
+
+  // Painting: pick a digit as a "pen" (SPEC: painting mode), then apply it
+  // to any number of cells with one tap each via `paintCell`, instead of
+  // reselecting the cell before every digit press. Turning painting off
+  // drops the loaded pen too, so re-enabling it always starts unloaded.
+  togglePaintMode(): void {
+    this.paintMode = !this.paintMode;
+    if (!this.paintMode) this.paintDigit = null;
+  }
+
+  // Tapping the already-loaded digit again lifts the pen rather than
+  // re-loading it, so the same button doubles as an on/off switch per digit.
+  selectPaintDigit(digit: number): void {
+    if (!this.paintMode) return;
+    this.paintDigit = this.paintDigit === digit ? null : digit;
+  }
+
+  // Applies the loaded pen digit to `index` via the normal enterDigit path,
+  // so painting sets a final value or toggles a pencil mark depending on
+  // notesMode exactly like a manual cell-then-digit entry would.
+  paintCell(index: number): void {
+    if (!this.paintMode || this.paintDigit == null) return;
+    this.enterDigit(index, this.paintDigit);
   }
 
   private snapshot(index: number): CellSnapshot {
@@ -260,6 +286,8 @@ export class GameEngine {
     this.grid = this.buildInitialGrid();
     this.selectedCell = null;
     this.notesMode = false;
+    this.paintMode = false;
+    this.paintDigit = null;
     this.mistakes = 0;
     this.score = 0;
     this.elapsedMs = 0;

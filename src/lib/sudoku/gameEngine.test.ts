@@ -120,6 +120,65 @@ describe('notes and peer auto-clear', () => {
   });
 });
 
+describe('paint mode', () => {
+  it('does nothing until paint mode is on', () => {
+    engine.selectPaintDigit(6);
+    engine.paintCell(4);
+    expect(engine.paintDigit).toBeNull();
+    expect(engine.grid[4].value).toBe(0);
+  });
+
+  it('loads a pen digit, tapping the same digit again lifts it', () => {
+    engine.togglePaintMode();
+    engine.selectPaintDigit(6);
+    expect(engine.paintDigit).toBe(6);
+    engine.selectPaintDigit(6);
+    expect(engine.paintDigit).toBeNull();
+  });
+
+  it('selecting a different digit switches the loaded pen', () => {
+    engine.togglePaintMode();
+    engine.selectPaintDigit(6);
+    engine.selectPaintDigit(2);
+    expect(engine.paintDigit).toBe(2);
+  });
+
+  it('paints a final value onto each tapped cell when notes mode is off', () => {
+    engine.togglePaintMode();
+    engine.selectPaintDigit(SOLUTION[4]);
+    engine.paintCell(4);
+    engine.paintCell(13);
+    expect(engine.grid[4].value).toBe(SOLUTION[4]);
+    expect(engine.grid[13].value).toBe(SOLUTION[4]); // same painted digit, regardless of correctness there
+  });
+
+  it('paints a pencil mark onto each tapped cell when notes mode is on', () => {
+    engine.toggleNotesMode();
+    engine.togglePaintMode();
+    engine.selectPaintDigit(6);
+    engine.paintCell(4);
+    engine.paintCell(13);
+    expect(engine.grid[4].value).toBe(0);
+    expect(engine.grid[4].notes & (1 << 5)).not.toBe(0);
+    expect(engine.grid[13].notes & (1 << 5)).not.toBe(0);
+  });
+
+  it('is a no-op with no pen digit loaded', () => {
+    engine.togglePaintMode();
+    engine.paintCell(4);
+    expect(engine.grid[4].value).toBe(0);
+    expect(engine.history).toHaveLength(0);
+  });
+
+  it('drops the loaded pen when paint mode is turned off', () => {
+    engine.togglePaintMode();
+    engine.selectPaintDigit(6);
+    engine.togglePaintMode();
+    expect(engine.paintMode).toBe(false);
+    expect(engine.paintDigit).toBeNull();
+  });
+});
+
 describe('erase', () => {
   it('clears a cell\'s value and notes', () => {
     engine.setValue(4, SOLUTION[4]);
@@ -312,6 +371,14 @@ describe('win detection', () => {
 });
 
 describe('restart', () => {
+  it('drops paint mode and the loaded pen', () => {
+    engine.togglePaintMode();
+    engine.selectPaintDigit(6);
+    engine.restart();
+    expect(engine.paintMode).toBe(false);
+    expect(engine.paintDigit).toBeNull();
+  });
+
   it('resets the board to givens and clears mistakes/score/history', () => {
     engine.setValue(4, (SOLUTION[4] % 9) + 1); // a mistake
     engine.requestHint();
