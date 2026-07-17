@@ -103,8 +103,13 @@
     cursor: default;
   }
 
-  .tool:not(:disabled):hover {
-    background: var(--control-bg-hover, #eef4ff);
+  /* Guarded to real hover-capable pointers: on touch devices, tapping a
+     button applies :hover with no matching mouseleave to clear it, so the
+     highlight sticks around until an unrelated tap bumps it off. */
+  @media (hover: hover) {
+    .tool:not(:disabled):hover {
+      background: var(--control-bg-hover, #eef4ff);
+    }
   }
 
   .tool.active {

@@ -63,7 +63,10 @@
     cursor: pointer;
   }
 
-  .menu-panel button:hover {
-    background: var(--control-bg-hover, #eef4ff);
+  /* Guarded to real hover-capable pointers — see Toolbar.svelte for why. */
+  @media (hover: hover) {
+    .menu-panel button:hover {
+      background: var(--control-bg-hover, #eef4ff);
+    }
   }
 </style>

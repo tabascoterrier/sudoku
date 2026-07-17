@@ -75,8 +75,11 @@
     cursor: default;
   }
 
-  .digit:not(:disabled):hover {
-    background: var(--control-bg-hover, #eef4ff);
+  /* Guarded to real hover-capable pointers — see Toolbar.svelte for why. */
+  @media (hover: hover) {
+    .digit:not(:disabled):hover {
+      background: var(--control-bg-hover, #eef4ff);
+    }
   }
 
   .digit.paint-loaded {
